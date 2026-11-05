@@ -1,24 +1,21 @@
 # Template Visual e Estrutura do Arquivo `wishlist.html`
 
-Este documento contém o modelo de código HTML5 e CSS3 responsivo utilizado para gerar a página da Wishlist. 
+Modelo de código HTML5 e CSS3 responsivo utilizado para renderizar a página da Wishlist.
 
 ---
 
-## 1. Explicação da Estrutura Visual
+## 1. Estrutura Visual e Comportamento
 
-A página foi construída com foco em legibilidade, desempenho e design moderno (clean/dashboard):
-
-- **Grid Responsivo (`.grid`)**: Utiliza `display: grid` com `repeat(auto-fill, minmax(260px, 1fr))`. Os cartões dos produtos se reorganizam automaticamente conforme a largura da tela (celular, tablet ou desktop).
-- **Cards dos Produtos (`.card`)**: Possuem bordas suaves, sombra discreta e um efeito de elevação (*hover*) quando o usuário passa o mouse por cima (`transform: translateY(-4px)`).
-- **Tratamento de Imagem (`.card img`)**: A propriedade `object-fit: contain` garante que as fotos dos produtos sejam redimensionadas proporcionalmente dentro de uma área de 180px, sem cortar nem distorcer a imagem original.
-- **Hierarquia de Preço & Ação (`.meta`)**: O preço final é exibido em verde (`#16a34a`) com fonte em destaque (1.35rem, negrito). O botão de ação abre o link da loja em uma nova aba com os atributos de segurança `target="_blank" rel="noopener noreferrer"`.
-- **Ponto de Injeção (`<!-- INSERT_CARDS_HERE -->`)**: Marcador utilizado pelo código Python / ADK para identificar o local exato onde a lista de cartões formatados deve ser colada.
+- **Grid Responsivo (`.grid`)**: Grid auto-ajustável (`repeat(auto-fill, minmax(260px, 1fr))`) para telas de mobile, tablet e desktop.
+- **Tratamento da Imagem (`.card img`)**: A propriedade `object-fit: contain` garante que a imagem capturada entre as 10 primeiras do Google Imagens seja exibida sem distorções em área de 180px.
+- **Hierarquia de Preço & Ação (`.meta`)**: Menor preço real em BRL em verde destacado (`#16a34a`, 1.35rem) e botão "Ver na Loja" direcionando para a URL canônica direta com `target="_blank" rel="noopener noreferrer"`.
+- **Ponto de Injeção (`<!-- INSERT_CARDS_HERE -->`)**: Marcador substituído pelo bloco consolidado de cards.
 
 ---
 
 ## 2. Estrutura dos Cards Gerados Dinamicamente
 
-Para cada produto contido no payload de dados, o agente deve gerar o seguinte fragmento HTML:
+Para cada item validado contra o schema, gerar o seguinte fragmento HTML:
 
 ```html
 <div class="card">
@@ -30,3 +27,9 @@ Para cada produto contido no payload de dados, o agente deve gerar o seguinte fr
     <a href="{url_produto}" target="_blank" rel="noopener noreferrer" class="btn">Ver na Loja</a>
   </div>
 </div>
+```
+
+> **Atenção Técnica para Injeção**:
+> - `{url_imagem}`: Raw URL direta obtida **entre as 10 primeiras fotos do Google Imagens** com validação semântica estrita do objeto (sem Markdown, sem imagem de anúncio).
+> - `{url_produto}`: Link de destino canônico direto do produto na loja (BLOQUEIO TOTAL de links de busca como `google.com/search` ou `amazon.com.br/s?k=`).
+> - `{preco}`: Menor preço float real em BRL formatado no padrão brasileiro (`R$ X.XXX,XX`). PROIBIDO valores fictícios/padrão (ex: R$ 199,90).

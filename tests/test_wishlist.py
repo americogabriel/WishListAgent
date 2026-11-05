@@ -84,11 +84,18 @@ class TestWishlistAgent(unittest.TestCase):
         self.assertIn("url_produto", resultado)
         self.assertIn("url_imagem", resultado)
 
+        # Validações anti-alucinação adicionais
+        res_guitarra = pesquisar_ofertas_produto("suporte de guitarra")
+        self.assertNotEqual(res_guitarra["preco"], 199.90)
+        self.assertNotIn("google.com/search", res_guitarra["url_produto"])
+        self.assertIn("mercadolivre.com.br", res_guitarra["url_produto"])
+        self.assertIn("guitarra", res_guitarra["titulo"].lower())
+
     def test_adk_agent_definition(self):
         self.assertEqual(root_agent.name, "wishlist_agent")
         self.assertEqual(len(root_agent.tools), 2)
-        tool_names = [t.__name__ for t in root_agent.tools]
-        self.assertIn("pesquisar_ofertas_produto", tool_names)
+        tool_names = [getattr(t, "__name__", getattr(t, "name", str(t))) for t in root_agent.tools]
+        self.assertIn("google_search", tool_names)
         self.assertIn("gerar_wishlist_html", tool_names)
         self.assertIn("Olá! Sou seu assistente de Wishlist", root_agent.instruction)
 
